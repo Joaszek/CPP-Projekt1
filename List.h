@@ -8,12 +8,10 @@ struct ListElement {
 };
 
 class List {
-private:
-    int number = 0;
 
 public:
     ListElement *front, *tail;
-    int *size = &number;
+    int size =0;
 
 
     List();
@@ -26,18 +24,15 @@ public:
 
     void add_element(int number);
 
-    void delete_element_at_the_beginning(ListElement **head);
+    void delete_element_at_the_beginning();
 
-    void delete_element_at_the_end(ListElement **head);
+    void delete_element_at_the_end();
 
-    void delete_element(ListElement **head, int number);
+    void delete_element(int number);
 
     void print_list();
 
     void menu_list();
-
-    int get_list_size(ListElement **head);
-
-    void time_difference(ListElement **head, int time);
+    void remove_element(ListElement *element);
 };
 

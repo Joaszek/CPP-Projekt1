@@ -7,9 +7,9 @@ using namespace std;
 
 
 List::List() {
-    List::front = nullptr;
-    List::tail = nullptr;
-    *List::size = 0;
+    this->front = nullptr;
+    this->tail = nullptr;
+    this->size = 0;
 }
 
 List::~List() {
@@ -17,113 +17,148 @@ List::~List() {
 }
 
 void List::add_element_at_the_beginning(int number) {
-    if(List::front == nullptr){
-        List::front = new ListElement;
-        List::front->previous=nullptr;
-        List::front ->number = number;
-        List::front ->next = List::tail;
+    if (front == nullptr) {
+        front = new ListElement;
+        front->previous = nullptr;
+        front->number = number;
+        front->next = tail;
 
 
-        List::tail = new ListElement;
-        List::tail -> previous = List::front;
-        List::tail ->number = NULL;
-        List::tail ->next = nullptr;
-        *List::size++;
-        cout << List::size<<endl;
-    }else{
+        tail = new ListElement;
+        tail->previous = front;
+        tail->number = NULL;
+        tail->next = nullptr;
+        size++;
+        cout << List::size << endl;
+    } else {
         ListElement *p = new ListElement;
         p->number = number;
         p->previous = nullptr;
-        p->next = List::front;
-        List::front=p;
-        *List::size++;
-        cout << List::size<<endl;
+        p->next = front;
+        front = p;
+        size++;
+        cout << size << endl;
 
     }
 }
 
 void List::add_element_at_the_end(int number) {
-    if(List::size==0){
+    if (size == 0) {
         add_element_at_the_beginning(number);
-    }else{
+    } else {
         ListElement *p = new ListElement;
 
         p->number = number;
-        p->next = List::tail;
-        p->previous = List::tail->previous;
-        List::tail->previous->next = p;
-        List::tail->previous = p;
+        p->next = tail;
+        p->previous = tail->previous;
+        tail->previous->next = p;
+        tail->previous = p;
 
-        *List::size++;
+        size++;
     }
 }
 
 void List::add_element(int number) {
-    cout << "Size: "<<*List::size<<endl;
-    if(List::size!=0){
-        int index = std::rand() % *List::size;
-        ListElement *p = new ListElement;
-        ListElement *temp = List::front;
+//nie dziala
+    if (size != 0) {
+        int index = (std::rand() % size);
 
-        int i =0;
-        cout <<"index: "<<index<<endl;
-        while(temp->next){
-            if(i==index)break;
-            temp=temp->next;
+        ListElement *p = new ListElement;
+
+        ListElement *temp = front;
+
+        int i = 0;
+
+        while (temp&&i<index) {
+            temp = temp->next;
             i++;
         }
-        p->number = number;
-        p->next = temp->next;
-        p->previous = temp;
 
-        temp->next->previous = p;
-        temp->next = p;
-    }else{
+        auto *s = temp->previous;
+
+        p->number = number;
+
+        p->next = temp;
+
+        p->previous = temp->previous;
+
+        s->next = p;
+
+        temp->previous = p;
+
+    } else {
         add_element_at_the_beginning(number);
     }
 }
 
-void List::delete_element_at_the_beginning(ListElement **head) {
-    cout << "Delete element at the beginning"<<endl;
+void List::delete_element_at_the_beginning() {
+//    size--;
+//    auto *p = front->next;
+//    delete front;
+//    front = p;
+    remove_element(front);
+}
+void List::remove_element(ListElement *element)
+{
+    size--;
+    if(element->previous ){
+        element->previous->next = element->next;
+    }
+    else{
+        front = element->next;
+    }
+    if( element->next ){
+        element->next->previous = element->previous;
+    }
+    else{
+        tail = element->previous;
+    }
+    delete element;
+}
+void List::delete_element_at_the_end() {
+    //nie dziala
+//    size--;
+//    auto *p = tail->previous;
+//    p->next= nullptr;
+//    delete tail;
+//    tail=p;
+    remove_element(tail);
 }
 
-void List::delete_element_at_the_end(ListElement **head) {
-    cout << "Delete element at the end"<<endl;
-}
+void List::delete_element(int number) {
+    ListElement *p = front;
+    ListElement *temp;
+    while(p->next){
+        if(p->number==number){
+            temp=p->previous;
+            p->previous->next=p->next;
+            p->next->previous = temp;
+            delete p;
+            break;
+        }
+        p=p->next;
+    }
 
-void List::delete_element(ListElement **head, int number) {
-    cout << "Delete element"<<endl;
 }
 
 void List::print_list() {
-    ListElement *p = List::front;
-    while( p )
-    {
-        cout << p->number <<endl;
+    ListElement *p = this->front;
+    while (p) {
+        cout << p->number << endl;
         p = p->next;
     }
 }
 
 
-int List::get_list_size(ListElement **head) {
-    cout << "List size"<<endl;
-    return 1;
-}
-
-void List::time_difference( ListElement **head, int time) {
-
-}
-
 void List::menu_list() {
-    ListElement *head;
-    List *list = new List();
-    head = NULL;
+    List list;
 
     int option = -1;
-    int size = 0;
     string file_name;
-    int length;
-
+    add_element_at_the_beginning(0);
+    add_element_at_the_beginning(1);
+    add_element_at_the_beginning(2);
+    add_element_at_the_beginning(3);
     while (option != 7) {
 
         printf("\nChoose option\n");
@@ -141,13 +176,13 @@ void List::menu_list() {
         scanf("%i", &option);
 
         switch (option) {
-            case 0:{
+            case 0: {
                 //add element at the beginning
                 int number_to_add;
                 printf("Enter value to add at the beginning: ");
                 scanf("%i", &number_to_add);
 
-                list->add_element_at_the_beginning(number_to_add);
+                add_element_at_the_beginning(number_to_add);
             }
                 break;
             case 1: {
@@ -156,7 +191,7 @@ void List::menu_list() {
                 printf("Enter value to add at the end: ");
                 scanf("%i", &number_to_add);
 
-                list->add_element_at_the_end(number_to_add);
+                add_element_at_the_end(number_to_add);
             }
                 break;
             case 2: {
@@ -165,30 +200,29 @@ void List::menu_list() {
                 printf("Enter value to add: ");
                 scanf("%i", &temp);
                 add_element(temp);
-                list ->print_list();
+                print_list();
             }
                 break;
             case 3: {
                 //delete first item
-                delete_element_at_the_beginning(&head);
+                delete_element_at_the_beginning();
             }
                 break;
             case 4: {
                 //delete last element
-                delete_element_at_the_end(&head);
+                delete_element_at_the_end();
             }
                 break;
             case 5: {
                 //delete chosen element
-                int number =0;
-                delete_element(&head,number);
+                int number = 0;
+                delete_element(number);
             }
                 break;
             case 6:
-                list->print_list();
+                print_list();
                 break;
             case 7:
-                head = NULL;
                 break;
 
             default:
