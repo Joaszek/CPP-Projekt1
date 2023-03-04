@@ -29,16 +29,14 @@ void List::add_element_at_the_beginning(int number) {
         tail->number = NULL;
         tail->next = nullptr;
         size++;
-        cout << List::size << endl;
     } else {
         ListElement *p = new ListElement;
+        front->previous = p;
         p->number = number;
         p->previous = nullptr;
         p->next = front;
         front = p;
         size++;
-        cout << size << endl;
-
     }
 }
 
@@ -59,32 +57,39 @@ void List::add_element_at_the_end(int number) {
 }
 
 void List::add_element(int number) {
-//nie dziala
     if (size != 0) {
-        int index = (std::rand() % size);
+        int index = (std::rand() % (size));
+        if(index==0){
+            add_element_at_the_beginning(number);
 
-        ListElement *p = new ListElement;
+        }else if(index==size-1){
+            add_element_at_the_end(number);
+        }else{
+            ListElement *p = new ListElement;
 
-        ListElement *temp = front;
+            ListElement *temp = front;
 
-        int i = 0;
+            int i = 0;
 
-        while (temp&&i<index) {
-            temp = temp->next;
-            i++;
+            while (temp&&i<index) {
+                temp = temp->next;
+                i++;
+            }
+
+            auto *s = temp->previous;
+
+            p->number = number;
+
+            p->next = temp;
+
+            p->previous = temp->previous;
+
+            s->next = p;
+
+            temp->previous = p;
         }
 
-        auto *s = temp->previous;
 
-        p->number = number;
-
-        p->next = temp;
-
-        p->previous = temp->previous;
-
-        s->next = p;
-
-        temp->previous = p;
 
     } else {
         add_element_at_the_beginning(number);
@@ -92,10 +97,7 @@ void List::add_element(int number) {
 }
 
 void List::delete_element_at_the_beginning() {
-//    size--;
-//    auto *p = front->next;
-//    delete front;
-//    front = p;
+
     remove_element(front);
 }
 void List::remove_element(ListElement *element)
@@ -116,34 +118,37 @@ void List::remove_element(ListElement *element)
     delete element;
 }
 void List::delete_element_at_the_end() {
-    //nie dziala
-//    size--;
-//    auto *p = tail->previous;
-//    p->next= nullptr;
-//    delete tail;
-//    tail=p;
-    remove_element(tail);
+    size--;
+    auto *p = tail->previous;
+    p->next= nullptr;
+    delete tail;
+    tail=p;
 }
 
 void List::delete_element(int number) {
     ListElement *p = front;
-    ListElement *temp;
-    while(p->next){
+    while(p){
         if(p->number==number){
-            temp=p->previous;
-            p->previous->next=p->next;
-            p->next->previous = temp;
+            if(p->previous== nullptr){
+                delete_element_at_the_beginning();
+                return;
+            }else if(p->next== nullptr){
+                delete_element_at_the_end();
+                return;
+            }else{
+                p->previous->next=p->next;
+                p->next->previous = p->previous;
+            }
             delete p;
             break;
         }
         p=p->next;
     }
-
 }
 
 void List::print_list() {
     ListElement *p = this->front;
-    while (p) {
+    while (p!=tail&&p!= nullptr) {
         cout << p->number << endl;
         p = p->next;
     }
@@ -155,10 +160,10 @@ void List::menu_list() {
 
     int option = -1;
     string file_name;
-    add_element_at_the_beginning(0);
-    add_element_at_the_beginning(1);
-    add_element_at_the_beginning(2);
-    add_element_at_the_beginning(3);
+    add_element_at_the_beginning(10);
+    add_element_at_the_beginning(12);
+    add_element_at_the_beginning(23);
+    add_element_at_the_beginning(30);
     while (option != 7) {
 
         printf("\nChoose option\n");
@@ -168,7 +173,7 @@ void List::menu_list() {
 
         printf("3. Delete first element\n");
         printf("4. Delete last element\n");
-        printf("5. Delete element at given position\n");
+        printf("5. Delete element with given value\n");
 
         printf("6. Show list\n");
         printf("7. Go back to main menu\n");
@@ -216,6 +221,8 @@ void List::menu_list() {
             case 5: {
                 //delete chosen element
                 int number = 0;
+                printf("Enter value to delete: ");
+                scanf("%i", &number);
                 delete_element(number);
             }
                 break;
