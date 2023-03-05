@@ -31,7 +31,7 @@ void List::add_element_at_the_beginning(int number) {
 
         tail = new ListElement;
         tail->previous = front;
-        tail->number = NULL;
+        tail->number = -1;
         tail->next = nullptr;
         size++;
     } else {
@@ -175,8 +175,10 @@ void List::check_if_element_exists(int number) {
 
 void List::measure_time() {
     //dodać wypisywanie do pliku
+    ofstream file;
+    file.open("wyniki.txt", ios::out);
 
-    int TEST_NUMBER = 200000;
+    int TEST_NUMBER = 8000;
     int tab_test[TEST_NUMBER];
 
     for(int iteration =0;iteration<100;iteration++){
@@ -193,9 +195,9 @@ void List::measure_time() {
             add_element_at_the_beginning(tab_test[i]);
         }
         auto end = chrono::steady_clock::now();
-        auto duration_add_at_beginning = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+        auto duration_add_at_beginning = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         cout << "adding at the beginning: " << duration_add_at_beginning << " microseconds" << endl;
-
+        file << duration_add_at_beginning<<";";
 
         //delete at the beginning
         begin = chrono::steady_clock::now();
@@ -203,9 +205,11 @@ void List::measure_time() {
             delete_element_at_the_beginning();
         }
         end = chrono::steady_clock::now();
-        auto duration_delete_element_at_the_beginning = std::chrono::duration_cast<std::chrono::microseconds>(
+        auto duration_delete_element_at_the_beginning = std::chrono::duration_cast<std::chrono::nanoseconds>(
                 end - begin).count();
         cout << "delete at the beginning: " << duration_delete_element_at_the_beginning << " microseconds" << endl;
+        file << duration_delete_element_at_the_beginning<<";";
+
 
         //add at the end
         begin = chrono::steady_clock::now();
@@ -213,8 +217,10 @@ void List::measure_time() {
             add_element_at_the_end(tab_test[i]);
         }
         end = chrono::steady_clock::now();
-        auto duration_add_element_at_the_end = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+        auto duration_add_element_at_the_end = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         cout << "add at the end: " << duration_add_element_at_the_end << " microseconds" << endl;
+        file << duration_add_element_at_the_end<<";";
+
 
         //delete element at the end
         begin = chrono::steady_clock::now();
@@ -222,10 +228,10 @@ void List::measure_time() {
             delete_element_at_the_end();
         }
         end = chrono::steady_clock::now();
-        auto duration_delete_element_at_the_end = std::chrono::duration_cast<std::chrono::microseconds>(
+        auto duration_delete_element_at_the_end = std::chrono::duration_cast<std::chrono::nanoseconds>(
                 end - begin).count();
         cout << "delete at the end: " << duration_delete_element_at_the_end << " microseconds" << endl;
-
+        file << duration_add_element_at_the_end<<"\n";
     }
 
 
@@ -236,16 +242,20 @@ void List::load_from_file() {
     string filename = "list";
     fstream file;
 
-//    cout << "Enter file name with txt extension: \n";
-//    cin >> filename;
+    cout << "Enter file name with txt extension: \n";
+    cin >> filename;
 
-    file.open(R"(C:Users\Joachim\Desktop\CPPProjekt1\list.txt)", ios::in);
+    file.open("lista.txt", ios::in);
 
     if(file.is_open()){
-        cout <<"IN"<<endl;
         string data;
+        getline(file, data);
+        size =  atoi(data.c_str());
+        cout <<"Size: "<< size<<endl;
+        int value;
         while(getline(file, data)){
-            cout << data <<endl;
+            value = atoi(data.c_str());
+            add_element_at_the_end(value);
         }
     }
     file.close();
