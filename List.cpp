@@ -7,10 +7,6 @@
 
 using namespace std;
 
-/*
- * wczytywanie z pliku(użytkwnik podaje nazwe na wejście)
- */
-
 List::List() {
     this->front = nullptr;
     this->tail = nullptr;
@@ -174,14 +170,18 @@ void List::check_if_element_exists(int number) {
 }
 
 void List::measure_time() {
-    //dodać wypisywanie do pliku
+
     ofstream file;
-    file.open("wyniki.txt", ios::out);
+    file.open("scores.txt");
 
     int TEST_NUMBER = 8000;
     int tab_test[TEST_NUMBER];
 
-    for(int iteration =0;iteration<100;iteration++){
+    if(file.is_open()){
+        cout << "File open";
+    }
+
+    for(int iteration =0;iteration<1;iteration++){
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             tab_test[i] = std::rand() % (16);
@@ -189,6 +189,7 @@ void List::measure_time() {
         while (size > 0) {
             delete_element_at_the_end();
         }
+
         //adding at the beginning
         auto begin = chrono::steady_clock::now();
         for (int i = 0; i < TEST_NUMBER; i++) {
@@ -233,8 +234,7 @@ void List::measure_time() {
         cout << "delete at the end: " << duration_delete_element_at_the_end << " microseconds" << endl;
         file << duration_add_element_at_the_end<<"\n";
     }
-
-
+    file.close();
 }
 
 void List::load_from_file() {
@@ -245,7 +245,7 @@ void List::load_from_file() {
     cout << "Enter file name with txt extension: \n";
     cin >> filename;
 
-    file.open("lista.txt", ios::in);
+    file.open(filename, ios::in);
 
     if(file.is_open()){
         string data;
