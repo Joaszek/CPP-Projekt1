@@ -1,10 +1,15 @@
 #include <conio.h>
 #include <string>
 #include <windows.h>
+#include <chrono>
 #include "List.h"
+#include <fstream>
 
 using namespace std;
 
+/*
+ * wczytywanie z pliku(użytkwnik podaje nazwe na wejście)
+ */
 
 List::List() {
     this->front = nullptr;
@@ -43,6 +48,7 @@ void List::add_element_at_the_beginning(int number) {
 void List::add_element_at_the_end(int number) {
     if (size == 0) {
         add_element_at_the_beginning(number);
+        return;
     } else {
         ListElement *p = new ListElement;
 
@@ -59,19 +65,20 @@ void List::add_element_at_the_end(int number) {
 void List::add_element(int number) {
     if (size != 0) {
         int index = (std::rand() % (size));
-        if(index==0){
+        if (index == 0) {
             add_element_at_the_beginning(number);
-
-        }else if(index==size-1){
+            return;
+        } else if (index == size - 1) {
             add_element_at_the_end(number);
-        }else{
+            return;
+        } else {
             ListElement *p = new ListElement;
 
             ListElement *temp = front;
 
             int i = 0;
 
-            while (temp&&i<index) {
+            while (temp && i < index) {
                 temp = temp->next;
                 i++;
             }
@@ -87,72 +94,163 @@ void List::add_element(int number) {
             s->next = p;
 
             temp->previous = p;
+            return;
         }
-
-
-
     } else {
         add_element_at_the_beginning(number);
+        return;
     }
 }
 
 void List::delete_element_at_the_beginning() {
 
     remove_element(front);
+    return;
 }
-void List::remove_element(ListElement *element)
-{
+
+void List::remove_element(ListElement *element) {
     size--;
-    if(element->previous ){
+    if (element->previous) {
         element->previous->next = element->next;
-    }
-    else{
+
+    } else {
         front = element->next;
     }
-    if( element->next ){
+    if (element->next) {
         element->next->previous = element->previous;
-    }
-    else{
+
+    } else {
         tail = element->previous;
     }
     delete element;
 }
+
 void List::delete_element_at_the_end() {
     size--;
     auto *p = tail->previous;
-    p->next= nullptr;
+    p->next = nullptr;
     delete tail;
-    tail=p;
+    tail = p;
 }
 
 void List::delete_element(int number) {
     ListElement *p = front;
-    while(p){
-        if(p->number==number){
-            if(p->previous== nullptr){
+    while (p) {
+        if (p->number == number) {
+            if (p->previous == nullptr) {
                 delete_element_at_the_beginning();
-                return;
-            }else if(p->next== nullptr){
+            } else if (p->next == nullptr) {
                 delete_element_at_the_end();
-                return;
-            }else{
-                p->previous->next=p->next;
+            } else {
+                p->previous->next = p->next;
                 p->next->previous = p->previous;
             }
             delete p;
-            break;
+            return;
+            //break;
         }
-        p=p->next;
+        p = p->next;
     }
 }
 
 void List::print_list() {
     ListElement *p = this->front;
-    while (p!=tail&&p!= nullptr) {
-        cout << p->number << endl;
+    while (p != tail && p != nullptr) {
+        cout << p->number << " ";
         p = p->next;
     }
 }
+
+void List::check_if_element_exists(int number) {
+    ListElement *p = front;
+    while (p) {
+        if (p->number == number) {
+            cout << "List contains that number" << endl;
+            return;
+        }
+        p = p->next;
+    }
+    cout << "List doesn't contains that number" << endl;
+}
+
+void List::measure_time() {
+    //dodać wypisywanie do pliku
+
+    int TEST_NUMBER = 200000;
+    int tab_test[TEST_NUMBER];
+
+    for(int iteration =0;iteration<100;iteration++){
+
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            tab_test[i] = std::rand() % (16);
+        }
+        while (size > 0) {
+            delete_element_at_the_end();
+        }
+        //adding at the beginning
+        auto begin = chrono::steady_clock::now();
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            add_element_at_the_beginning(tab_test[i]);
+        }
+        auto end = chrono::steady_clock::now();
+        auto duration_add_at_beginning = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+        cout << "adding at the beginning: " << duration_add_at_beginning << " microseconds" << endl;
+
+
+        //delete at the beginning
+        begin = chrono::steady_clock::now();
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            delete_element_at_the_beginning();
+        }
+        end = chrono::steady_clock::now();
+        auto duration_delete_element_at_the_beginning = std::chrono::duration_cast<std::chrono::microseconds>(
+                end - begin).count();
+        cout << "delete at the beginning: " << duration_delete_element_at_the_beginning << " microseconds" << endl;
+
+        //add at the end
+        begin = chrono::steady_clock::now();
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            add_element_at_the_end(tab_test[i]);
+        }
+        end = chrono::steady_clock::now();
+        auto duration_add_element_at_the_end = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+        cout << "add at the end: " << duration_add_element_at_the_end << " microseconds" << endl;
+
+        //delete element at the end
+        begin = chrono::steady_clock::now();
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            delete_element_at_the_end();
+        }
+        end = chrono::steady_clock::now();
+        auto duration_delete_element_at_the_end = std::chrono::duration_cast<std::chrono::microseconds>(
+                end - begin).count();
+        cout << "delete at the end: " << duration_delete_element_at_the_end << " microseconds" << endl;
+
+    }
+
+
+}
+
+void List::load_from_file() {
+
+    string filename = "list";
+    fstream file;
+
+//    cout << "Enter file name with txt extension: \n";
+//    cin >> filename;
+
+    file.open(R"(C:Users\Joachim\Desktop\CPPProjekt1\list.txt)", ios::in);
+
+    if(file.is_open()){
+        cout <<"IN"<<endl;
+        string data;
+        while(getline(file, data)){
+            cout << data <<endl;
+        }
+    }
+    file.close();
+}
+
 
 
 void List::menu_list() {
@@ -177,6 +275,9 @@ void List::menu_list() {
 
         printf("6. Show list\n");
         printf("7. Go back to main menu\n");
+        printf("8. Check if number exists\n");
+        printf("9. Measure time\n");
+        printf("10. Load from file");
 
         scanf("%i", &option);
 
@@ -205,7 +306,6 @@ void List::menu_list() {
                 printf("Enter value to add: ");
                 scanf("%i", &temp);
                 add_element(temp);
-                print_list();
             }
                 break;
             case 3: {
@@ -226,16 +326,33 @@ void List::menu_list() {
                 delete_element(number);
             }
                 break;
-            case 6:
+            case 6: {
                 print_list();
+
+            }
                 break;
             case 7:
                 break;
-
+            case 8: {
+                int number = 0;
+                printf("Enter value to check: ");
+                scanf("%i", &number);
+                check_if_element_exists(number);
+            }
+                break;
+            case 9: {
+                measure_time();
+            }
+                break;
+            case 10: {
+                load_from_file();
+            }
+                break;
             default:
                 printf("Enter correct option");
                 Sleep(2000);
                 break;
         }
+        print_list();
     }
 }

@@ -34,5 +34,8 @@ public:
 
     void menu_list();
     void remove_element(ListElement *element);
+    void check_if_element_exists(int number);
+    void measure_time();
+    void load_from_file();
 };
 
