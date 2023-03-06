@@ -1,5 +1,5 @@
 #include "List.h"
-
+#include "Tab.h"
 using namespace std;
 
 
@@ -20,7 +20,9 @@ int main(){
 //
 //        scanf("%i", &option);
 //    }
-    List list;
-    list.menu_list();
+    // List list;
+    // list.menu_list();
+    Tablica tab;
+    tab.menu_tablicy();
     return 0;
 }

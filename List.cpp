@@ -174,14 +174,14 @@ void List::measure_time() {
     ofstream file;
     file.open("scores.txt");
 
-    int TEST_NUMBER = 8000;
+    const int TEST_NUMBER = 8000;
     int tab_test[TEST_NUMBER];
 
     if(file.is_open()){
         cout << "File open";
     }
 
-    for(int iteration =0;iteration<1;iteration++){
+    for(int iteration =0;iteration<100;iteration++){
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             tab_test[i] = std::rand() % (16);
@@ -196,9 +196,11 @@ void List::measure_time() {
             add_element_at_the_beginning(tab_test[i]);
         }
         auto end = chrono::steady_clock::now();
+
         auto duration_add_at_beginning = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         cout << "adding at the beginning: " << duration_add_at_beginning << " microseconds" << endl;
         file << duration_add_at_beginning<<";";
+        
 
         //delete at the beginning
         begin = chrono::steady_clock::now();
