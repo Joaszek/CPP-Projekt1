@@ -4,7 +4,6 @@
 #ifndef tab_cpp
 #define tab_cpp
 
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,363 +15,301 @@
 using namespace std;
 
 
-	void Tablica::menu_tablicy(){
-        int option=-1;
-        string filename;
 
-        while(option!=0)
+Tab::Tab(){
+
+}
+Tab::~Tab(){
+    
+}
+
+void Tab::array_menu()
+{
+    int option = -1;
+    string filename;
+
+    while (option != 0)
+    {
+
+        printf("\nChoose option?\n");
+        printf("1. Build array from file\n");
+        printf("2. Add element at given position\n");
+        printf("3. Delete element at given position\n");
+        printf("4. Check if array contains number\n");
+        printf("5. Generate array with chosen length\n");
+        printf("6. Measure time\n");
+        printf("7. Go back to main menu\n");
+
+        scanf("%i", &option);
+
+        switch (option)        {
+        case 1:
         {
+            int *tab;
+            size = 0;
+            tab = new int[size];
+            printf("Enter file name: ");
+            cin >> filename;
 
-            printf("\nChoose option?\n");
-            printf("1. Build array from file\n");
-            printf("2. Delete element at given position\n");
-            printf("3. Add element at given position\n");
-            printf("4. Check if array contains number\n");
-            printf("5. Generate array with chosen length\n");
-            printf("6. Print array\n");
-            printf("7. Measure time\n");
-            printf("8. Go back to main menu\n");
+            ifstream file(filename.c_str());
+            string size_of_array;
+            getline(file, size_of_array);
+            length = atoi(size_of_array.c_str());
 
-            scanf("%i", &option);
-
-            switch (option)
-            {
-            case 1:
-            	{
-            	int  *tab;
-            	size = 0;
-                tab = new int[rozmiar];
-                printf("Podaj nazwe pliku, z którego chcesz wczytac tablice: ");
-                cin >> nazwa_pliku;
-
-                ifstream plik(nazwa_pliku.c_str());
-                string rozmiar_1;
-                getline(plik, rozmiar_1);
-                dlugosc = atoi(rozmiar_1.c_str());
-
-
-                while(rozmiar < dlugosc)
-                {
-                    string liczba_1;
-                    getline(plik, liczba_1);
-                    liczba = atoi(liczba_1.c_str());
-                    dodaj_element(liczba, rozmiar);
-                }
-                wyswietl_tablice();
-                plik.close();
-                }break;
-            case 2:
-                printf("Wpisz indeks elementu, ktory chcesz usunac: ");
-                scanf("%i", &indeks);
-                usun_element(indeks);
-                wyswietl_tablice();
-                break;
-            case 3:
-                printf("Wpisz liczbe jaka chcesz dodac: ");
-                scanf("%i", &liczba);
-                printf("Wpisz indeks: ");
-                scanf("%i", &indeks);
-                dodaj_element(liczba, indeks);
-	            wyswietl_tablice();
-				break;
-            case 4:
-                printf("Wpisz element, ktory chcesz sprawdzic, czy znajduje sie w tablicy: ");
-                scanf("%i", &liczba);
-                znajdz_element(liczba);
-                break;
-            case 5:
-            	rozmiar = 0;
-            	tablica = new int[rozmiar];
-                srand(time(NULL));
-                printf("Podaj dlugosc tablicy, która chcesz wygenerowac: ");
-                scanf("%i", &dlugosc);
-
-                while(rozmiar < dlugosc)
-                {
-                    liczba = std::rand();
-                    dodaj_element_na_ostatnim_miejscu(liczba);
-                }
-                wyswietl_tablice();
-                break;
-            case 6:
-                wyswietl_tablice();
-                break;
-            case 7:
-            	pomiar_czasu(1000);
-            	pomiar_czasu(2500);
-            	pomiar_czasu(5000);
-            	pomiar_czasu(7500);
-            	pomiar_czasu(10000);
-            	pomiar_czasu(15000);
-            	pomiar_czasu(25000);
-            	pomiar_czasu(50000);
-            	pomiar_czasu(75000);
-            	pomiar_czasu(100000);
-
-            	break;
-            case 8:
-                rozmiar = 0;
-                break;
-            default:
-                printf("Podaj wlasciwa opcje.");
-                Sleep(2000);
-                break;
-
+            while (size < length){
+                string number_to_add;
+                getline(file, number_to_add);
+                number = atoi(number_to_add.c_str());
+                add_element_at_the_end(number);
             }
+            file.close();
+        }
+        break;
+        case 2:
+            printf("Add number you want to add: ");
+            scanf("%i", &number);
+            printf("Enter index: ");
+            scanf("%i", &index);
+            add_element_at_given_position(number, index);
+            break;
+        case 3:
+            printf("Enter index of element you want to delete: ");
+            scanf("%i", &index);
+            delete_element(index);
+            break;
+        
+        case 4:
+            printf("Check element: ");
+            scanf("%i", &number);
+            find_element(number);
+            break;
+        case 5:
+            delete tab;
+            size = 0;
+            printf("Enter array length: ");
+            scanf("%i", &length);
+            generate_array(length);
+            break;
+        case 6:
+            measure_time();
+            break;
+        case 7:
+            size = 0;
+            return;
+            break;
+        default:
+            printf("Podaj wlasciwa opcje.");
+            Sleep(2000);
+            break;
+        }
+        print_array();
+    }
+}
+void Tab::generate_array(int length){
+    srand(time(NULL));
+    tab = new int[length];
+    for(int i=0;i<length;i++){
+        number = rand()%16;
+        add_element_at_the_end(number);
+    }
+}
+void Tab::add_element_at_the_end(int number)
+{
+    //tworzymy nową tablice
+    int *copy = new int[size];
+
+    //przepisujemy wartosci do nowej tablicy
+    for (int i = 0; i < size; i++)
+    {
+        copy[i] = tab[i];
+    }
+
+    size++;//zwiekszamy rozmiar o jeden dla nowego elementu
+
+    //usuwamy starą tablice 
+    delete tab;
+    
+    //znajdujemy nowe miejsce dla tablicy
+    tab = new int[size];
+    
+    //dodajemy wartości do nowej tablicy
+    for (int i = 0; i < size - 1; i++)
+    {
+        tab[i] = copy[i];
+    }
+    //dodanie nowej wartosci
+    tab[size - 1] = number;
+
+    //usuwamy starą
+    delete[] copy;
+}
+void Tab::add_element_at_the_beginning(int number)
+{
+    //tworzymy nową tablice
+    int *copy = new int[size+1];
+
+    //przepisujemy wartosci do nowej tablicy
+    for (int i = 0; i < size; i++)
+    {
+        copy[i+1] = tab[i];
+    }
+
+    size++;
+    //usuwamy starą tablice 
+    delete tab;
+    
+    //znajdujemy nowe miejsce dla tablicy
+    tab = new int[size];
+
+    //dodajemy nową wartosc do kopii
+    copy[0] = number;
+
+    //dodajemy wartości do nowej tablicy
+    for (int i = 0; i < size; i++)
+    {
+        tab[i] = copy[i];
+    }
+
+    //usuwamy starą
+    delete[] copy;
+}
+void Tab::add_element_at_given_position(int number, int index)
+{
+    //tworzymy wskaznik na tablice
+    int *copy = tab;
+
+    //zwiekszamy rozmiar o 1
+    size++;
+
+    //tworzymy nową tablice
+    tab = new int[size];
+
+    //dodajemy elementy do tablicy
+    for (int i = 0; i < size - 1; i++)
+    {
+        //po nowym elemencie
+        if (i >= index){
+            tab[i + 1] = copy[i];
+        }
+        //przed nowym elementem 
+        else{
+            tab[i] = copy[i];
+        }
+            
+    }
+    //dodanie elementu na koniec tablicy jeśli indeks jest większy niż rozmiar
+    if (index >= size){
+        tab[size - 1] = number;
+    }
+    //dodanie elementu do tablicy        
+    else{
+        tab[index] = number;
+    }
+
+    //usuwanie tablicy
+    delete[] copy;
+}
+void Tab::delete_element(int index)
+{
+    //tworzenie kopii
+    int *copy = tab;
+
+    //zmniejszanie rozmiaru
+    size--;
+
+    //tworzenie nowej tablicy
+    tab = new int[size];
+
+    //dodawanie elementów do tablicy
+    for (int i = 0; i < size; i++)
+    {
+        //po starym elemencie
+        if (i >= index){
+            tab[i] = copy[i + 1];
+        }
+        //przed starym elementem
+        else{
+            tab[i] = copy[i];
         }
     }
-	void Tablica::dodaj_element_na_ostatnim_miejscu(int liczba){
-		int *kopia = new int[rozmiar];
-		for(int i = 0; i < rozmiar - 1; i++){
-			kopia[i] = tablica[i];
-		}
-		rozmiar++;
-
-		tablica = new int[rozmiar];
-		for(int i = 0; i < rozmiar - 1; i++){
-			tablica[i] = kopia[i];
-		}
-		tablica[rozmiar-1] = liczba;
-		delete [] kopia;
-	}
-	void Tablica::dodaj_element_na_pierwszym_miejscu(int liczba){
-		int *kopia = tablica;
-		rozmiar++;
-
-		tablica = new int[rozmiar];
-		tablica[0] = liczba;
-		for(int i = 0; i < rozmiar - 1; i++){
-			tablica[i+1] = kopia[i];
-		}
-		delete [] kopia;
-	}
-    void Tablica::dodaj_element(int liczba, int indeks){
-		int *kopia = tablica;
-		rozmiar++;
-		tablica = new int[rozmiar];
-		for(int i = 0; i < rozmiar - 1; i++){
-				if(i >= indeks)
-					tablica[i+1] = kopia[i];
-				else
-					tablica[i] = kopia[i];
-			}
-        if(indeks >= rozmiar)
-            tablica[rozmiar-1] = liczba;
-        else
-            tablica[indeks] = liczba;
-		delete [] kopia;
-	}
-	void Tablica::usun_element(int indeks){
-		int *kopia = tablica;
-		rozmiar--;
-
-		tablica = new int[rozmiar];
-		for(int i = 0; i < rozmiar; i++){
-			if( i >= indeks)
-				tablica[i] = kopia[i+1];
-			else
-			   	tablica[i] = kopia[i];
-		}
-		delete [] kopia;
-	}
-	void Tablica::znajdz_element(int liczba){
-		int i = 0;
-		while(i < rozmiar && liczba != tablica[i]){
-			i++;
-		}
-		if(i < rozmiar)
-			std::cout << "Liczba znajduje sie w tablicy.";
-		else
-		{
-			std::cout << "Liczba nie znajduje sie w tablicy.";
-		}
-
-	}
-	void Tablica::wyswietl_tablice(){
-        for(int i = 0; i < rozmiar; i++)
-			cout << tablica[i] << " ";
-	}
-    void Tablica::pomiar_czasu(int wielkosc){
-        string nazwa;
-        string txt = ".txt";
-        string rozmiar1;
-        rozmiar1 = to_string(wielkosc);
-        nazwa = "Tablica_DodawanieNaPierwszymMiejscu_";
-        nazwa = nazwa + rozmiar1+txt;
-
-        ofstream fout;
-        fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                liczba = std::rand();
-                auto begin = std::chrono::steady_clock::now();
-                dodaj_element_na_pierwszym_miejscu(liczba);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
+    //usuwanie kopii
+    delete[] copy;
+}
+void Tab::find_element(int number)
+{
+    //sprawdzenie czy element znajduje sie w tablicy
+    for(int i=0;i<size;i++){
+        if(tab[i]==number){
+            cout << "Tab contains that number at index: "<<i <<endl;
+            return;
         }
-        fout.close();
-
-        nazwa = "Tablica_DodawanieNaOstatnimMiejscu_";
-        nazwa = nazwa + rozmiar1+txt;
-                fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                liczba = std::rand();
-                auto begin = std::chrono::steady_clock::now();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
-        }
-        fout.close();
-                nazwa = "Tablica_DodawanieNaLosowymMiejscu_";
-        nazwa = nazwa + rozmiar1+txt;
-                fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                liczba = std::rand();
-                indeks = std::rand();
-                auto begin = std::chrono::steady_clock::now();
-                dodaj_element(liczba, indeks);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
-        }
-        fout.close();
-        nazwa = "Tablica_UsuwanieNaPierwszymMiejscu_";
-        nazwa = nazwa + rozmiar1+txt;
-        fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                auto begin = std::chrono::steady_clock::now();
-                usun_element(0);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
-        }
-        fout.close();
-        nazwa = "Tablica_UsuwanieNaOstatnimMiejscu_";
-        nazwa = nazwa + rozmiar1+txt;
-        fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                auto begin = std::chrono::steady_clock::now();
-                usun_element(rozmiar);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
-        }
-        fout.close();
-        nazwa = "Tablica_UsuwanieNaLosowymMiejscu_";
-        nazwa = nazwa + rozmiar1+txt;
-        fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                indeks = std::rand();
-                auto begin = std::chrono::steady_clock::now();
-                usun_element(indeks);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
-        }
-        fout.close();
-        nazwa = "Tablica_SzukanieElementu_";
-        nazwa = nazwa + rozmiar1+txt;
-        fout.open(nazwa);
-        srand(time(NULL));
-        for(int i = 0; i < 100; i++)
-        {
-            int  *tablica;
-            rozmiar = 0;
-            tablica = new int[rozmiar];
-            for(int i = 0; i < wielkosc; i++)
-            {
-                liczba = std::rand();
-                dodaj_element_na_ostatnim_miejscu(liczba);
-            }
-            for(int i = 0; i < 150; i++)
-            {
-                liczba = std::rand();
-                auto begin = std::chrono::steady_clock::now();
-                znajdz_element(liczba);
-                auto end = std::chrono::steady_clock::now();
-                fout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ";
-            }
-            fout << "\n";
-        }
-        fout.close();
     }
+    cout << "Tab doesn't contains that number"<<endl;
+}
+
+void Tab::print_array()
+{
+    //wypisz liste
+    for (int i = 0; i < size; i++)
+        cout << tab[i] << " ";
+}
+void Tab::measure_time()
+{
+    //ilosc iteracji
+    const int NUMBER_OF_ITERATIONS = 4000;
+
+    //tworzenie polaczenia z plikiem
+    ofstream file;
+    file.open("scores_tab.txt");
+
+    int tab_test[NUMBER_OF_ITERATIONS];
+    for(int i=0;i<NUMBER_OF_ITERATIONS;i++){
+        tab_test[i]=std::rand()%16;
+    }
+
+    srand(time(NULL));
+
+    int *tab;
+    for (int i = 0; i < 100; i++)
+    {
+        //mierzenie czasu dla dodania na poczatku
+        auto begin = std::chrono::steady_clock::now();
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            add_element_at_the_beginning(number);
+        }
+        auto end = std::chrono::steady_clock::now();
+
+        file << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
+
+        //mierzenie czasu dla usuwania na poczatku
+        begin = std::chrono::steady_clock::now();
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            delete_element(0);
+        }
+        end = std::chrono::steady_clock::now();
+        file << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
+        
+        //mierzenie czasu dla dodania na koncu
+        begin = std::chrono::steady_clock::now();
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            add_element_at_the_end(number);
+        }
+        end = std::chrono::steady_clock::now();
+
+        file << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
+
+        //mierzenie czasu dla usuwania na koncu
+        begin = std::chrono::steady_clock::now();
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            delete_element(size-1);
+        }
+        end = std::chrono::steady_clock::now();
+        file << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()<<"\n";
+    }
+    file.close();
+}
 #endif

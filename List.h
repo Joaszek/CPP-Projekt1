@@ -22,7 +22,7 @@ public:
 
     void add_element_at_the_end(int number);
 
-    void add_element(int number);
+    void add_element(int number, int index);
 
     void delete_element_at_the_beginning();
 

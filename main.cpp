@@ -20,9 +20,9 @@ int main(){
 //
 //        scanf("%i", &option);
 //    }
-    // List list;
-    // list.menu_list();
-    Tablica tab;
-    tab.menu_tablicy();
+    List list;
+    list.menu_list();
+    //Tab tab;
+    //tab.array_menu();
     return 0;
 }
