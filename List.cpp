@@ -4,6 +4,7 @@
 #include <chrono>
 #include "List.h"
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -49,6 +50,7 @@ void List::add_element_at_the_beginning(int number)
 
 void List::add_element_at_the_end(int number)
 {
+    cout <<size<<endl;
     //sprawdzamy czy istnieje glowa, jezeli nie to wywolujemy funkcje poczatkowa
     if (size == 0)
     {
@@ -75,7 +77,10 @@ void List::add_element(int number, int index)
     //sprawdzamy czy glowa istnieje, jezeli tak to tworzymy nowy element i losujemy mu pozycje
     if (size != 0)
     {
-        if (index == 0)
+        if(index<0){
+            cout << "Index out of bounds"<<endl;
+        }
+        else if (index == 0)
         {
             //jezeli index wynosi zero to tworzymy nowa glowe
             add_element_at_the_beginning(number);
@@ -85,6 +90,10 @@ void List::add_element(int number, int index)
         {
             //jezeli index wynosi size-1 to tworzymy nowy ogon
             add_element_at_the_end(number);
+            return;
+        }
+        else if(index>size+1){
+            cout << "Index out of bounds"<<endl;
             return;
         }
         else
@@ -246,7 +255,7 @@ void List::measure_time()
     file.open("scores_list.txt");
 
     //stala okreslajaca ilosc testow
-    const int TEST_NUMBER = 8000;
+    const int TEST_NUMBER = 80;
     int tab_test[TEST_NUMBER];
 
     //sprawdzamy czy udalo sie otworzyc plik
@@ -257,7 +266,7 @@ void List::measure_time()
     }
 
     //zaczynamy testy
-    for (int iteration = 0; iteration < 100; iteration++)
+    for (int iteration = 0; iteration < 1; iteration++)
     {
         
         //tworzymy losowe zmienne
@@ -282,7 +291,7 @@ void List::measure_time()
         //obliczamy roznice czasow
         auto duration_add_at_beginning = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
 
-        cout << "adding at the beginning: " << duration_add_at_beginning << " microseconds" << endl;
+        //cout << "adding at the beginning: " << duration_add_at_beginning << " microseconds" << endl;
         //wysylamy dane do pliku
         file << duration_add_at_beginning << ";";
 
@@ -298,7 +307,7 @@ void List::measure_time()
         end = chrono::steady_clock::now();
 
         auto duration_delete_element_at_the_beginning = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
-        cout << "delete at the beginning: " << duration_delete_element_at_the_beginning << " microseconds" << endl;
+        //cout << "delete at the beginning: " << duration_delete_element_at_the_beginning << " microseconds" << endl;
 
 
         file << duration_delete_element_at_the_beginning << ";";
@@ -311,7 +320,8 @@ void List::measure_time()
         }
         end = chrono::steady_clock::now();
         auto duration_add_element_at_the_end = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
-        cout << "add at the end: " << duration_add_element_at_the_end << " microseconds" << endl;
+        
+        //cout << "add at the end: " << duration_add_element_at_the_end << " microseconds" << endl;
         file << duration_add_element_at_the_end << ";";
 
         // delete element at the end
@@ -324,7 +334,7 @@ void List::measure_time()
         auto duration_delete_element_at_the_end = std::chrono::duration_cast<std::chrono::nanoseconds>(
                                                       end - begin)
                                                       .count();
-        cout << "delete at the end: " << duration_delete_element_at_the_end << " microseconds" << endl;
+        //cout << "delete at the end: " << duration_delete_element_at_the_end << " microseconds" << endl;
         file << duration_add_element_at_the_end << "\n";
     }
     file.close();
@@ -342,13 +352,13 @@ void List::load_from_file()
     cin >> filename;
 
     file.open(filename, ios::in);
-
+    int size_to_enter;
     //jezeli udalo sie otworzyc plik to pobieramy dane z niego
     if (file.is_open())
     {
         string data;
         getline(file, data);
-        size = atoi(data.c_str());
+        size_to_enter = atoi(data.c_str());
         cout << "Size: " << size << endl;
         int value;
         while (getline(file, data))
@@ -372,10 +382,10 @@ void List::menu_list()
         printf("\nChoose option\n");
         printf("1.Load from file\n");
         printf("2. Add element at given position\n");
-        printf("3. Delete element at given position\n");
+        printf("3. Delete element with given value\n");
         printf("4. Check if list contains number\n");
         printf("5. Measure time\n");
-        printf("6. Go back to menu");
+        printf("6. Go back to menu\n");
 
         scanf("%i", &option);
 
@@ -392,7 +402,7 @@ void List::menu_list()
             // dodaj na wybranej pozycji
             int number_to_add;
             int index;
-            printf("Enter value to add at the end: ");
+            printf("Enter value to add: ");
             scanf("%i", &number_to_add);
             cout << "At which position you want to add: " << endl;
             cin >> index;
