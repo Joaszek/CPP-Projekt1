@@ -22,89 +22,6 @@ Tab::Tab(){
 Tab::~Tab(){
     
 }
-
-void Tab::array_menu()
-{
-    int option = -1;
-    string filename;
-
-    while (option != 0)
-    {
-
-        printf("\nChoose option?\n");
-        printf("1. Build array from file\n");
-        printf("2. Add element at given position\n");
-        printf("3. Delete element at given position\n");
-        printf("4. Check if array contains number\n");
-        printf("5. Generate array with chosen length\n");
-        printf("6. Measure time\n");
-        printf("7. Go back to main menu\n");
-
-        scanf("%i", &option);
-
-        switch (option)        {
-        case 1:
-        {
-            int *tab;
-            size = 0;
-            tab = new int[size];
-            printf("Enter file name: ");
-            cin >> filename;
-
-            ifstream file(filename.c_str());
-            string size_of_array;
-            getline(file, size_of_array);
-            length = atoi(size_of_array.c_str());
-
-            while (size < length){
-                string number_to_add;
-                getline(file, number_to_add);
-                number = atoi(number_to_add.c_str());
-                add_element_at_the_end(number);
-            }
-            file.close();
-        }
-        break;
-        case 2:
-            printf("Add number you want to add: ");
-            scanf("%i", &number);
-            printf("Enter index: ");
-            scanf("%i", &index);
-            add_element_at_given_position(number, index);
-            break;
-        case 3:
-            printf("Enter index of element you want to delete: ");
-            scanf("%i", &index);
-            delete_element(index);
-            break;
-        
-        case 4:
-            printf("Check element: ");
-            scanf("%i", &number);
-            find_element(number);
-            break;
-        case 5:
-            delete tab;
-            size = 0;
-            printf("Enter array length: ");
-            scanf("%i", &length);
-            generate_array(length);
-            break;
-        case 6:
-            measure_time();
-            break;
-        case 7:
-            size = 0;
-            return;
-            break;
-        default:
-            printf("Podaj wlasciwa opcje.");
-            Sleep(2000);
-            break;
-        }
-        print_array();
-    }
-}
 void Tab::generate_array(int length){
     srand(time(NULL));
     tab = new int[length];
@@ -113,6 +30,7 @@ void Tab::generate_array(int length){
         add_element_at_the_end(number);
     }
 }
+
 void Tab::add_element_at_the_end(int number)
 {
     //tworzymy nową tablice
@@ -311,5 +229,87 @@ void Tab::measure_time()
         file << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()<<"\n";
     }
     file.close();
+}
+void Tab::array_menu()
+{
+    int option = -1;
+    string filename;
+
+    while (option != 0)
+    {
+
+        printf("\nChoose option?\n");
+        printf("1.Build array from file\n");
+        printf("2.Add element at given position\n");
+        printf("3.Delete element at given position\n");
+        printf("4.Check if array contains number\n");
+        printf("5.Generate array with chosen length\n");
+        printf("6.Measure time\n");
+        printf("7.Go back to main menu\n");
+
+        scanf("%i", &option);
+
+        switch (option)        {
+        case 1:
+        {
+            int *tab;
+            size = 0;
+            tab = new int[size];
+            printf("Enter file name: ");
+            cin >> filename;
+
+            ifstream file(filename.c_str());
+            string size_of_array;
+            getline(file, size_of_array);
+            length = atoi(size_of_array.c_str());
+
+            while (size < length){
+                string number_to_add;
+                getline(file, number_to_add);
+                number = atoi(number_to_add.c_str());
+                add_element_at_the_end(number);
+            }
+            file.close();
+        }
+        break;
+        case 2:
+            printf("Add number you want to add: ");
+            scanf("%i", &number);
+            printf("Enter index: ");
+            scanf("%i", &index);
+            add_element_at_given_position(number, index);
+            break;
+        case 3:
+            printf("Enter index of element you want to delete: ");
+            scanf("%i", &index);
+            delete_element(index);
+            break;
+        
+        case 4:
+            printf("Check element: ");
+            scanf("%i", &number);
+            find_element(number);
+            break;
+        case 5:
+            delete tab;
+            size = 0;
+            printf("Enter array length: ");
+            scanf("%i", &length);
+            generate_array(length);
+            break;
+        case 6:
+            measure_time();
+            break;
+        case 7:
+            size = 0;
+            return;
+            break;
+        default:
+            printf("Podaj wlasciwa opcje.");
+            Sleep(2000);
+            break;
+        }
+        print_array();
+    }
 }
 #endif

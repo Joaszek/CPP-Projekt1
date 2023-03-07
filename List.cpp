@@ -71,6 +71,18 @@ void List::add_element_at_the_end(int number)
     }
 }
 
+void List::generate_list(int size_to_generate){
+    while (size > 0){
+        delete_element_at_the_end();
+    }
+    srand(time(NULL));
+    int number_to_find;
+    for(int i=0;i<size_to_generate;i++){
+        number_to_find = rand()%size_to_generate;
+        add_element_at_the_end(number_to_find);
+    }
+}
+
 void List::add_element(int number, int index)
 {
     //sprawdzamy czy glowa istnieje, jezeli tak to tworzymy nowy element i losujemy mu pozycje
@@ -393,7 +405,8 @@ void List::menu_list()
         cout << "3.Delete element with given value"<<endl;
         cout << "4.Check if list contains number"<<endl;
         cout << "5.Measure time"<<endl;
-        cout << "6.Go back to menu"<<endl;
+        cout << "6.Generate list"<<endl;
+        cout << "7.Go back to menu"<<endl;
 
         scanf("%i", &option);
 
@@ -442,6 +455,11 @@ void List::menu_list()
         }
         break;
         case 6:
+            int new_size;
+            cout << "Enter new size: "<<endl;
+            cin >> new_size;
+            generate_list(new_size); 
+        case 7:
             return;
             
         default:

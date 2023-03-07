@@ -37,5 +37,6 @@ public:
     void check_if_element_exists(int number);
     void measure_time();
     void load_from_file();
+    void generate_list(int size_to_generate);
 };
 
