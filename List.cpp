@@ -50,7 +50,6 @@ void List::add_element_at_the_beginning(int number)
 
 void List::add_element_at_the_end(int number)
 {
-    cout <<size<<endl;
     //sprawdzamy czy istnieje glowa, jezeli nie to wywolujemy funkcje poczatkowa
     if (size == 0)
     {
@@ -218,12 +217,21 @@ void List::delete_element(int number)
 
 void List::print_list()
 {
-    //pokazujemy liste
+    //pokazujemy liste od przodu
     ListElement *p = this->front;
     while (p != tail && p != nullptr)
     {
         cout << p->number << " ";
         p = p->next;
+    }
+    cout << endl;
+
+    //pokazujemy od konca
+    p = this ->tail->previous;
+    while (p != nullptr)
+    {
+        cout << p->number << " ";
+        p = p->previous;
     }
 }
 
@@ -255,7 +263,7 @@ void List::measure_time()
     file.open("scores_list.txt");
 
     //stala okreslajaca ilosc testow
-    const int TEST_NUMBER = 80;
+    const int TEST_NUMBER = 800;
     int tab_test[TEST_NUMBER];
 
     //sprawdzamy czy udalo sie otworzyc plik
@@ -266,7 +274,7 @@ void List::measure_time()
     }
 
     //zaczynamy testy
-    for (int iteration = 0; iteration < 1; iteration++)
+    for (int iteration = 0; iteration < 10; iteration++)
     {
         
         //tworzymy losowe zmienne
@@ -379,13 +387,13 @@ void List::menu_list()
     while (option != 6)
     {
 
-        printf("\nChoose option\n");
-        printf("1.Load from file\n");
-        printf("2. Add element at given position\n");
-        printf("3. Delete element with given value\n");
-        printf("4. Check if list contains number\n");
-        printf("5. Measure time\n");
-        printf("6. Go back to menu\n");
+        cout << "\nChoose option"<<endl;
+        cout << "1.Load from file"<<endl;
+        cout << "2.Add element at given position"<<endl;
+        cout << "3.Delete element with given value"<<endl;
+        cout << "4.Check if list contains number"<<endl;
+        cout << "5.Measure time"<<endl;
+        cout << "6.Go back to menu"<<endl;
 
         scanf("%i", &option);
 
@@ -402,7 +410,7 @@ void List::menu_list()
             // dodaj na wybranej pozycji
             int number_to_add;
             int index;
-            printf("Enter value to add: ");
+            cout << "Enter value to add: "<<endl;
             scanf("%i", &number_to_add);
             cout << "At which position you want to add: " << endl;
             cin >> index;
@@ -413,7 +421,7 @@ void List::menu_list()
         {
             // usun wybrany element
             int number = 0;
-            printf("Enter value to delete: ");
+            cout << "Enter value to delete: "<<endl;
             scanf("%i", &number);
             delete_element(number);
         }
@@ -422,7 +430,7 @@ void List::menu_list()
         {
             //sprawdzanie wartosci
             int number = 0;
-            printf("Enter value to check: ");
+            cout << "Enter value to check: "<<endl;
             scanf("%i", &number);
             check_if_element_exists(number);
         }
@@ -433,8 +441,11 @@ void List::menu_list()
             measure_time();
         }
         break;
+        case 6:
+            return;
+            
         default:
-            printf("Enter correct option");
+            cout << "Enter correct option"<<endl;
             Sleep(2000);
             break;
         }
