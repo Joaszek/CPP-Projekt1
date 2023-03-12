@@ -3,37 +3,34 @@
 
 using namespace std;
 
-struct RBTNode
-    {
-      RBTNode * father;
-      RBTNode * left_son;
-      RBTNode * right_son;
-      int number;
-      char color;
-    };
-
-class Tree{
-public:
-    
-
-    RBTNode S;
-    RBTNode *head;
-
-    int size;
-    int number;
-
-    void add_element(int number); 
-    void delete_element(int number);//
-    void find_element(int number);
-    void print_tree( string sp, string sn, RBTNode * p); //
-    void tree_menu();//
-    void rotation_to_the_left(RBTNode * node);//
-    void rotation_to_the_right(RBTNode * node );//
-    RBTNode * next(RBTNode *p);//
-    RBTNode * minimum(RBTNode *p);
-    void rebuilt_structure(RBTNode *node);
-    void delete_root();
-    void measure_time();
-
+struct Red_Black_Node
+{
+  Red_Black_Node *father;
+  Red_Black_Node *left_son;
+  Red_Black_Node *right_son;
+  int number;
+  char color;
 };
 
+class Tree
+{
+public:
+  Red_Black_Node sentinel_node;
+  Red_Black_Node *head;
+
+  int size;
+  int number;
+
+  void add_element(int number);
+  void delete_element(int number); //
+  void find_element(int number);
+  void print_tree(string sp, string sn, Red_Black_Node *p);
+  void tree_menu();
+  void rotation_to_the_left(Red_Black_Node *node);
+  void rotation_to_the_right(Red_Black_Node *node);
+  Red_Black_Node *next_node(Red_Black_Node *p);
+  Red_Black_Node *minimum(Red_Black_Node *p);
+  void rebuilt_structure(Red_Black_Node *node);
+  void delete_root();
+  void measure_time();
+};

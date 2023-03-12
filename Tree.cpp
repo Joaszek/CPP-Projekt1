@@ -22,7 +22,7 @@ void Tree::tree_menu()
     while (option != 0)
     {
 
-        cout << "\nChoose option" << endl;
+        cout << "Choose option" << endl;
         cout << "1.Build tree from file" << endl;
         cout << "2.Delete node with given value" << endl;
         cout << "3.Add node" << endl;
@@ -31,37 +31,55 @@ void Tree::tree_menu()
         cout << "6.Measure time" << endl;
         cout << "7.Go back to main menu" << endl;
 
-        scanf("%i", &option);
+        cin >> option;
 
         switch (option)
         {
-        case 0:
-            head = NULL;
-            break;
 
         case 1:
         {
+            size = 0;
+
+            // wpisujemy nazwe pliku
             cout << "Enter file name: " << endl;
             cin >> file_name;
-            size = 0;
-            ifstream file(file_name.c_str()); // osobna funkcja
-            string size_of_tree;
-            getline(file, size_of_tree);
-            length = atoi(size_of_tree.c_str());
-            head = NULL;
-            while (size < length)
+            // otwieramy plik
+            fstream file;
+            file.open(file_name, ios::in);
+
+            if (file.is_open())
             {
-                string number_to_add_to_tree;
-                getline(file, number_to_add_to_tree);
-                number = atoi(number_to_add_to_tree.c_str());
-                add_element(number);
+
+                // zmienna do przechowania rozmiaru
+                string size_of_tree;
+
+                // pobieranie dlugosci z pliku
+                getline(file, size_of_tree);
+                length = atoi(size_of_tree.c_str());
+
+                head = NULL;
+
+                // dopoki aktualny rozmiar jest mniejszy od dlugosci podanej w pliku
+                // wykonuj petle
+                while (size < length)
+                {
+                    // pobieranie wartosci i dodawanie jej do drzewa
+                    string number_to_add_to_tree;
+                    getline(file, number_to_add_to_tree);
+                    number = atoi(number_to_add_to_tree.c_str());
+                    add_element(number);
+                }
+                file.close();
             }
-            file.close();
+            else
+            {
+                cout << "Could not open file" << endl;
+            }
         }
         break;
         case 2:
             cout << "Enter node you want to delete " << endl;
-            scanf("%i", &number);
+            cin >> number;
             if (size == 1)
             {
                 head = NULL;
@@ -72,18 +90,18 @@ void Tree::tree_menu()
             break;
         case 3:
             cout << "Enter node value you want to add: " << endl;
-            scanf("%i", &number);
+            cin >> number;
             add_element(number);
             break;
         case 4:
             cout << "Enter node value to check: " << endl;
-            scanf("%i", &number);
+            cin >> number;
             find_element(number);
             break;
         case 5:
             srand(time(NULL));
             cout << "Enter tree size: " << endl;
-            scanf("%i", &length);
+            cin >> length;
             size = 0;
             head = NULL;
             while (size < length)
@@ -93,9 +111,9 @@ void Tree::tree_menu()
             }
             break;
         case 6:
-            measure_time();    
+            measure_time();
             break;
-        case 8:
+        case 7:
             return;
         default:
             cout << "Enter correct option: ";
@@ -104,7 +122,7 @@ void Tree::tree_menu()
         }
     }
 }
-void Tree::print_tree(string sp, string sn, RBTNode *p)
+void Tree::print_tree(string sp, string sn, Red_Black_Node *p)
 {
 
     if (size == 0)
@@ -120,7 +138,7 @@ void Tree::print_tree(string sp, string sn, RBTNode *p)
         cp[0] = 179;
         string t;
 
-        if (p != &S)
+        if (p != &sentinel_node)
         {
             t = sp;
             if (sn == cr)
@@ -138,95 +156,125 @@ void Tree::print_tree(string sp, string sn, RBTNode *p)
 }
 void Tree::add_element(int number)
 {
+    // inicjujemy straznika
     if (size == 0)
     {
-        S.color = 'B'; // Inicjujemy stra�nika
-        S.father = &S;
-        S.left_son = &S;
-        S.right_son = &S;
-        head = &S;
+        sentinel_node.color = 'B';
+        sentinel_node.father = &sentinel_node;
+        sentinel_node.left_son = &sentinel_node;
+        sentinel_node.right_son = &sentinel_node;
+        head = &sentinel_node;
     }
-    RBTNode *X, *Y;
 
-    X = new RBTNode;  // Tworzymy nowy w�ze�
-    X->left_son = &S; // Inicjujemy pola
-    X->right_son = &S;
-    X->father = head;
-    X->number = number;
-    if (X->father == &S)
+    Red_Black_Node *node_to_add, *uncle;
+    // Tworzymy nowy wezel
+    node_to_add = new Red_Black_Node;
+
+    // Inicjujemy pola
+    node_to_add->left_son = &sentinel_node;
+    node_to_add->right_son = &sentinel_node;
+    node_to_add->father = head;
+    node_to_add->number = number;
+
+    // jezeli rodzic jest ustawiony na sentinel node wezel staje sie korzeniem
+    if (node_to_add->father == &sentinel_node)
     {
-        head = X; // X staje si� korzeniem
+        head = node_to_add;
     }
     else
     {
-        while (true) // Szukamy li�cia do zast�pienia przez X
+        while (true) // Szukamy liscia do zastspienia przez node_to_add
         {
-            if (number < X->father->number)
+            if (number < node_to_add->father->number)
             {
-                if (X->father->left_son == &S)
+                // jezeli jest lisciem
+                if (node_to_add->father->left_son == &sentinel_node)
                 {
-                    X->father->left_son = X; // X zast�puje lewy li��
+                    // node_to_add zastepuje lewy lisc
+                    node_to_add->father->left_son = node_to_add;
                     break;
                 }
-                X->father = X->father->left_son;
+                // lewy syn staje sie ojcem
+                node_to_add->father = node_to_add->father->left_son;
             }
             else
             {
-                if (X->father->right_son == &S)
+                // jezeli jest lisciem
+                if (node_to_add->father->right_son == &sentinel_node)
                 {
-                    X->father->right_son = X; // X zast�puje prawy li��
+                    // node_to_add zastepuje prawy lisc
+                    node_to_add->father->right_son = node_to_add;
                     break;
                 }
-                X->father = X->father->right_son;
+                // prawy syn staje sie ojcem
+                node_to_add->father = node_to_add->father->right_son;
             }
         }
-        X->color = 'R'; // W�ze� kolorujemy na czerwono
-        while ((X != head) && (X->father->color == 'R'))
+
+        // ustawiamy kolor wezla na czerwony
+        node_to_add->color = 'R';
+
+        // ustawianie kolorow w drzewie
+        while ((node_to_add != head) && (node_to_add->father->color == 'R'))
         {
-            if (X->father == X->father->father->left_son)
+            // sprawdzamy czy ojciec jest lewym synem
+            if (node_to_add->father == node_to_add->father->father->left_son)
             {
-                Y = X->father->father->right_son; // Y -> wujek X
-                if (Y->color == 'R')              // Przypadek 1
+                // uncle jest prawym bratem ojca node_to_add
+                uncle = node_to_add->father->father->right_son;
+
+                // przypadek 1
+                if (uncle->color == 'R')
                 {
-                    X->father->color = 'B';
-                    Y->color = 'B';
-                    X->father->father->color = 'R';
-                    X = X->father->father;
+                    node_to_add->father->color = 'B';
+                    uncle->color = 'B';
+                    node_to_add->father->father->color = 'R';
+                    node_to_add = node_to_add->father->father;
                     continue;
                 }
 
-                if (X == X->father->right_son) // Przypadek 2
+                // sprawdzamy czy node_to_add jest prawym synem
+                // przypadek 2
+                if (node_to_add == node_to_add->father->right_son)
                 {
-                    X = X->father;
-                    rotation_to_the_left(X);
+                    node_to_add = node_to_add->father;
+                    rotation_to_the_left(node_to_add);
                 }
 
-                X->father->color = 'B'; // Przypadek 3
-                X->father->father->color = 'R';
-                rotation_to_the_right(X->father->father);
+                // przypadek 3
+                node_to_add->father->color = 'B';
+                node_to_add->father->father->color = 'R';
+                rotation_to_the_right(node_to_add->father->father);
                 break;
             }
             else
-            { // Przypadki lustrzane
-                Y = X->father->father->left_son;
-                if (Y->color == 'R') // Przypadek 1
+            {
+                // przypadek analogiczny tylko z drugiej strony
+
+                // uncle jest lewym bratem ojca
+                uncle = node_to_add->father->father->left_son;
+
+                // przypadek 1
+                if (uncle->color == 'R')
                 {
-                    X->father->color = 'B';
-                    Y->color = 'B';
-                    X->father->father->color = 'R';
-                    X = X->father->father;
+                    node_to_add->father->color = 'B';
+                    uncle->color = 'B';
+                    node_to_add->father->father->color = 'R';
+                    node_to_add = node_to_add->father->father;
                     continue;
                 }
 
-                if (X == X->father->left_son) // Przypadek 2
+                // przypadek 2
+                if (node_to_add == node_to_add->father->left_son)
                 {
-                    X = X->father;
-                    rotation_to_the_right(X);
+                    node_to_add = node_to_add->father;
+                    rotation_to_the_right(node_to_add);
                 }
 
-                X->father->color = 'B'; // Przypadek 3
-                X->father->father->color = 'R';
-                rotation_to_the_left(X->father->father);
+                // przypadek 3
+                node_to_add->father->color = 'B';
+                node_to_add->father->father->color = 'R';
+                rotation_to_the_left(node_to_add->father->father);
                 break;
             }
         }
@@ -234,53 +282,81 @@ void Tree::add_element(int number)
     head->color = 'B';
     size++;
 }
-void Tree::rotation_to_the_left(RBTNode *A)
+void Tree::rotation_to_the_left(Red_Black_Node *A)
 {
-    RBTNode *B, *p;
-    B = A->right_son;
-    if (B != &S)
-    {
-        p = A->father;
-        A->right_son = B->left_son;
-        if (A->right_son != &S)
-            A->right_son->father = A;
+    // tworzymy pomocnicze wezly
+    Red_Black_Node *B, *p;
 
+    // ustawiamy wezel na prawego syna A
+    B = A->right_son;
+    if (B != &sentinel_node)
+    {
+        // p ustawiamy na ojca
+        p = A->father;
+
+        // ustawiamy wartosc prawego syna a
+        A->right_son = B->left_son;
+
+        // ustawiamy dziecki wskaznik na ojca
+        if (A->right_son != &sentinel_node)
+        {
+            A->right_son->father = A;
+        }
+
+        // ustawiamy pozostale wartosci
         B->left_son = A;
         B->father = p;
         A->father = B;
 
-        if (p != &S)
+        // jezeli p nie jest lisciem
+        if (p != &sentinel_node)
         {
+            // ustawiamy wartosci
             if (p->left_son == A)
+            {
                 p->left_son = B;
+            }
+
             else
+            {
                 p->right_son = B;
+            }
         }
         else
             head = B;
     }
 }
-void Tree::rotation_to_the_right(RBTNode *A)
+
+// analogicznie do rotacji w lewo
+void Tree::rotation_to_the_right(Red_Black_Node *A)
 {
-    RBTNode *B, *p;
+    Red_Black_Node *B, *p;
     B = A->left_son;
-    if (B != &S)
+    if (B != &sentinel_node)
     {
         p = A->father;
         A->left_son = B->right_son;
-        if (A->left_son != &S)
+
+        if (A->left_son != &sentinel_node)
+        {
             A->left_son->father = A;
+        }
 
         B->right_son = A;
         B->father = p;
         A->father = B;
 
-        if (p != &S)
+        if (p != &sentinel_node)
         {
             if (p->left_son == A)
+            {
                 p->left_son = B;
+            }
+
             else
+            {
                 p->right_son = B;
+            }
         }
         else
             head = B;
@@ -288,33 +364,49 @@ void Tree::rotation_to_the_right(RBTNode *A)
 }
 void Tree::delete_element(int number)
 {
-    RBTNode *Y, *X;
+
+    Red_Black_Node *Y, *X;
 
     X = head;
-    while ((X != &S) && (X->number != number))
+    // znajdujemy odpowiedni wezel
+    while ((X != &sentinel_node) && (X->number != number))
+    {
         if (number < X->number)
+        {
             X = X->left_son;
+        }
+
         else
+        {
             X = X->right_son;
+        }
+    }
+
     if (X == head)
     {
-        if (X->right_son == &S)
+        // usuwamy glowe gdy prawy syn jest lisciem
+        if (X->right_son == &sentinel_node)
         {
             head = X->left_son;
-            X->left_son->father = &S;
+            X->left_son->father = &sentinel_node;
 
             delete X;
         }
         else
         {
-            Y = next(X);
+            Y = next_node(X);
 
-            if (Y->right_son == &S)
+            if (Y->right_son == &sentinel_node)
             {
                 if (Y->father->left_son == Y)
-                    Y->father->left_son = &S;
+                {
+                    Y->father->left_son = &sentinel_node;
+                }
+
                 else
-                    Y->father->right_son = &S;
+                {
+                    Y->father->right_son = &sentinel_node;
+                }
             }
             else
             {
@@ -328,44 +420,61 @@ void Tree::delete_element(int number)
                     Y->father->right_son = Y->right_son;
                 }
             }
-
             head->number = Y->number;
             delete Y;
         }
     }
     else
     {
-        if ((X->left_son == &S) && (X->right_son == &S))
+        // ostatnia wartosc na drodze
+        if ((X->left_son == &sentinel_node) && (X->right_son == &sentinel_node))
         {
             if (X->father->left_son == X)
-                X->father->left_son = &S;
+            {
+                X->father->left_son = &sentinel_node;
+            }
+
             else
-                X->father->right_son = &S;
+            {
+                X->father->right_son = &sentinel_node;
+            }
+
             if (X->color == 'B')
+            {
                 rebuilt_structure(X->father);
+            }
+
             delete X;
         }
-        else if (X->right_son == &S)
+        else if (X->right_son == &sentinel_node)
         {
             if (X->father->left_son == X)
+            {
                 X->father->left_son = X->left_son;
+            }
+
             else
+            {
                 X->father->right_son = X->left_son;
+            }
+
             if (X->color == 'B')
+            {
                 rebuilt_structure(X->left_son);
+            }
 
             delete X;
         }
         else
         {
-            Y = next(X);
+            Y = next_node(X);
 
-            if (Y->right_son == &S)
+            if (Y->right_son == &sentinel_node)
             {
                 if (Y->father->left_son == Y)
-                    Y->father->left_son = &S;
+                    Y->father->left_son = &sentinel_node;
                 else
-                    Y->father->right_son = &S;
+                    Y->father->right_son = &sentinel_node;
             }
             else
             {
@@ -389,48 +498,65 @@ void Tree::delete_element(int number)
     head->color = 'B';
     size--;
 }
+
 void Tree::delete_root()
 {
-    RBTNode *Y, *X;
+    Red_Black_Node *Y, *X;
 
     X = head;
-    if ((X->left_son == &S) && (X->right_son == &S))
+    if ((X->left_son == &sentinel_node) && (X->right_son == &sentinel_node))
     {
         head = NULL;
     }
-    else if (X->right_son == &S)
+    // jezeli prawy syn jest pusty
+    else if (X->right_son == &sentinel_node)
     {
         if (X->father->left_son == X)
+        {
             X->father->left_son = X->left_son;
+        }
+
         else
+        {
+            // ustawiamy lewego syna na nowego lewego syna
             X->father->right_son = X->left_son;
+        }
+
         if (X->color == 'B')
             rebuilt_structure(X->left_son);
 
         delete X;
     }
-    else if (X->left_son == &S)
+    else if (X->left_son == &sentinel_node)
     {
+        // przenosimy syna pozycje wyzej
         if (X->father->right_son == X)
+        {
             X->father->right_son = X->right_son;
+        }
+
         else
+        {
             X->father->right_son = X->right_son;
+        }
 
         rebuilt_structure(X->right_son);
         delete X;
     }
     else
     {
-        Y = next(X);
-        if (Y->right_son == &S)
+        Y = next_node(X);
+        //sprawdzamy czy Y ma prawego syna
+        if (Y->right_son == &sentinel_node)
         {
+            
             if (Y->father->left_son == Y)
             {
-                Y->father->left_son = &S;
+                Y->father->left_son = &sentinel_node;
             }
             else
             {
-                Y->father->right_son = &S;
+                Y->father->right_son = &sentinel_node;
             }
         }
         else
@@ -453,102 +579,116 @@ void Tree::delete_root()
     head->color = 'B';
     size--;
 }
-void Tree::rebuilt_structure(RBTNode *X)
+void Tree::rebuilt_structure(Red_Black_Node *X)
 {
-    RBTNode *W;
+    Red_Black_Node *node;
 
     while ((X != head) && (X->color == 'B'))
     {
 
         if (X == X->father->left_son)
         {
-            W = X->father->right_son;
-
-            if (W->color == 'R')
-            { // Przypadek 1
-                W->color = 'B';
+            node = X->father->right_son;
+            
+            //przypadek 1
+            if (node->color == 'R')
+            { 
+                node->color = 'B';
                 X->father->color = 'R';
                 rotation_to_the_left(X->father);
-                W = X->father->right_son;
+                node = X->father->right_son;
             }
-
-            if ((W->left_son->color == 'B') && (W->right_son->color == 'B'))
-            { // Przypadek 2
-                W->color = 'R';
+            
+            //przypadek 2
+            if ((node->left_son->color == 'B') && (node->right_son->color == 'B'))
+            { 
+                node->color = 'R';
                 X = X->father;
                 continue;
             }
 
-            if (W->right_son->color == 'B')
-            { // Przypadek 3
-                W->left_son->color = 'B';
-                W->color = 'R';
-                rotation_to_the_right(W);
-                W = X->father->right_son;
+            //przypadek 3
+            if (node->right_son->color == 'B')
+            { 
+                node->left_son->color = 'B';
+                node->color = 'R';
+                rotation_to_the_right(node);
+                node = X->father->right_son;
             }
 
-            W->color = X->father->color; // Przypadek 4
+            //przypadek 4
+            node->color = X->father->color; 
             X->father->color = 'B';
-            W->right_son->color = 'B';
+            node->right_son->color = 'B';
             rotation_to_the_left(X->father);
-            X = head; // To spowoduje zako�czenie p�tli
+            //X = head; 
         }
         else
-        { // Przypadki lustrzane
-            W = X->father->left_son;
-
-            if (W->color == 'R')
-            { // Przypadek 1
-                W->color = 'B';
+        { 
+            node = X->father->left_son;
+            
+            //przypadek 1
+            if (node->color == 'R')
+            { 
+                node->color = 'B';
                 X->father->color = 'R';
                 rotation_to_the_right(X->father);
-                W = X->father->left_son;
+                node = X->father->left_son;
             }
 
-            if ((W->left_son->color == 'B') && (W->right_son->color == 'B'))
-            { // Przypadek 2
-                W->color = 'R';
+            // przypadek 2
+            if ((node->left_son->color == 'B') && (node->right_son->color == 'B'))
+            {
+                node->color = 'R';
                 X = X->father;
                 continue;
             }
 
-            if (W->left_son->color == 'B')
-            { // Przypadek 3
-                W->right_son->color = 'B';
-                W->color = 'R';
-                rotation_to_the_left(W);
-                W = X->father->left_son;
+            //przypadek 3
+            if (node->left_son->color == 'B')
+            { 
+                node->right_son->color = 'B';
+                node->color = 'R';
+                rotation_to_the_left(node);
+                node = X->father->left_son;
             }
 
-            W->color = X->father->color; // Przypadek 4
+            //przypadek 4
+            node->color = X->father->color; 
             X->father->color = 'B';
-            W->left_son->color = 'B';
+            node->left_son->color = 'B';
             rotation_to_the_right(X->father);
-            X = head; // To spowoduje zako�czenie p�tli
+            //X = head; 
         }
+        //warunek konczacy petle
+        X = head; 
     }
 }
-RBTNode *Tree::minimum(RBTNode *p)
+Red_Black_Node *Tree::minimum(Red_Black_Node *p)
 {
-    if (p != &S)
-        while (p->left_son != &S)
+    if (p != &sentinel_node)
+        while (p->left_son != &sentinel_node)
             p = p->left_son;
     return p;
 }
 
-RBTNode *Tree::next(RBTNode *p)
+Red_Black_Node *Tree::next_node(Red_Black_Node *p)
 {
 
-    RBTNode *r;
+    Red_Black_Node *r;
 
-    if (p != &S)
+    if (p != &sentinel_node)
     {
-        if (p->right_son != &S)
+        if (p->right_son != &sentinel_node)
+        {
             return minimum(p->right_son);
+        }
+
         else
         {
+            //???????????????
             r = p->father;
-            while ((r != &S) && (p == r->right_son))
+            while ((r != &sentinel_node) && (p == r->right_son))
             {
                 p = r;
                 r = r->father;
@@ -556,22 +696,33 @@ RBTNode *Tree::next(RBTNode *p)
             return r;
         }
     }
-    return &S;
+    return &sentinel_node;
 }
 void Tree::find_element(int number)
 {
-    RBTNode *p;
+    Red_Black_Node *p;
 
     p = head;
-    while ((p != &S) && (p->number != number))
+    while ((p != &sentinel_node) && (p->number != number))
         if (number < p->number)
+        {
             p = p->left_son;
+        }
+
         else
+        {
             p = p->right_son;
-    if (p == &S)
-        cout <<"Element nie znajduje sie w drzewie");
+        }
+
+    if (p == &sentinel_node)
+    {
+        cout << "Element nie znajduje sie w drzewie" << endl;
+    }
+
     else
-        cout <<"Element znajduje sie w drzewie");
+    {
+        cout << "Element znajduje sie w drzewie" << endl;
+    }
 }
 
 void Tree::measure_time()
