@@ -8,4 +8,4 @@ include_directories(.)
 add_executable(CPP_Projekt1
         List.cpp
         List.h
-        main.cpp)
+        main.cpp Tab.h Tab.cpp)
