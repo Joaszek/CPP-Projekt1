@@ -368,6 +368,7 @@ void Tree::delete_element(int number)
     Red_Black_Node *Y, *X;
 
     X = head;
+
     // znajdujemy odpowiedni wezel
     while ((X != &sentinel_node) && (X->number != number))
     {
@@ -384,51 +385,58 @@ void Tree::delete_element(int number)
 
     if (X == head)
     {
-        // usuwamy glowe gdy prawy syn jest lisciem
-        if (X->right_son == &sentinel_node)
-        {
-            head = X->left_son;
-            X->left_son->father = &sentinel_node;
+        // // usuwamy glowe gdy prawy syn jest lisciem
+        // if (X->right_son == &sentinel_node)
+        // {
+        //     head = X->left_son;
+        //     X->left_son->father = &sentinel_node;
+        //     rebuilt_structure(head);
+        //     delete X;
+        // }
+        // else
+        // {
+        //     // ustawiamy Y jako nastepnik
+        //     Y = next_node(X);
 
-            delete X;
-        }
-        else
-        {
-            Y = next_node(X);
+        //     if (Y->right_son == &sentinel_node)
+        //     {
+        //         // jezeli Y jest lewym synem
+        //         if (Y->father->left_son == Y)
+        //         {
+        //             Y->father->left_son = &sentinel_node;
+        //         }
+        //         else
+        //         {
+        //             Y->father->right_son = &sentinel_node;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         // Ustawiamy ojca prawego syna Y na ojca Y
+        //         Y->right_son->father = Y->father;
 
-            if (Y->right_son == &sentinel_node)
-            {
-                if (Y->father->left_son == Y)
-                {
-                    Y->father->left_son = &sentinel_node;
-                }
+        //         // jezeli Y jest lewym synem
+        //         if (Y->father->left_son == Y)
+        //         {
+        //             Y->father->left_son = Y->right_son;
+        //         }
+        //         else
+        //         {
+        //             Y->father->right_son = Y->right_son;
+        //         }
+        //     }
 
-                else
-                {
-                    Y->father->right_son = &sentinel_node;
-                }
-            }
-            else
-            {
-                Y->right_son->father = Y->father;
-                if (Y->father->left_son == Y)
-                {
-                    Y->father->left_son = Y->right_son;
-                }
-                else
-                {
-                    Y->father->right_son = Y->right_son;
-                }
-            }
-            head->number = Y->number;
-            delete Y;
-        }
+        //     head->number = Y->number;
+        //     delete Y;
+        // }
+        delete_root();
     }
     else
     {
-        // ostatnia wartosc na drodze
+        // jestesmy w lisciu i nie ma zadnego syna
         if ((X->left_son == &sentinel_node) && (X->right_son == &sentinel_node))
         {
+            // sprawdzamy czy X jest po lewej stronie
             if (X->father->left_son == X)
             {
                 X->father->left_son = &sentinel_node;
@@ -439,6 +447,8 @@ void Tree::delete_element(int number)
                 X->father->right_son = &sentinel_node;
             }
 
+            // jezeli lisc jest czarny to robimy rebuilt poniewaz
+            // na kazdej sciezce musi taka sama ilosc czarnych lisci
             if (X->color == 'B')
             {
                 rebuilt_structure(X->father);
@@ -446,18 +456,24 @@ void Tree::delete_element(int number)
 
             delete X;
         }
+        // jezeli X nie ma prawego syna
         else if (X->right_son == &sentinel_node)
         {
+            // sprawdzamy czy X jest lewym synem
             if (X->father->left_son == X)
             {
+                // ustawiamy lewego syna ojca X na lewego syna X
                 X->father->left_son = X->left_son;
             }
 
             else
             {
+                // ustawiamy prawego syna ojca X na lewego syna X
                 X->father->right_son = X->left_son;
             }
 
+            // jezeli lisc jest czarny to robimy rebuilt poniewaz
+            // na kazdej sciezce musi taka sama ilosc czarnych lisci
             if (X->color == 'B')
             {
                 rebuilt_structure(X->left_son);
@@ -465,17 +481,27 @@ void Tree::delete_element(int number)
 
             delete X;
         }
+        //X nie ma lewego syna
         else
         {
+            // szukamy nastepnika
             Y = next_node(X);
 
+            // jezeli prawy syn nastepnika jest pusty
             if (Y->right_son == &sentinel_node)
             {
+                //jezeli Y jest lewym synem
                 if (Y->father->left_son == Y)
+                {
                     Y->father->left_son = &sentinel_node;
-                else
+                }
+
+                else{
                     Y->father->right_son = &sentinel_node;
+                }
+                    
             }
+            //jezeli lewy syn nastepnika jest pusty
             else
             {
                 Y->right_son->father = Y->father;
@@ -490,11 +516,14 @@ void Tree::delete_element(int number)
             }
 
             X->number = Y->number;
-            if (X->color == 'B')
+
+            if (X->color == 'B'){
                 rebuilt_structure(X);
+            }
             delete Y;
         }
     }
+
     head->color = 'B';
     size--;
 }
@@ -546,10 +575,10 @@ void Tree::delete_root()
     else
     {
         Y = next_node(X);
-        //sprawdzamy czy Y ma prawego syna
+        // sprawdzamy czy Y ma prawego syna
         if (Y->right_son == &sentinel_node)
         {
-            
+
             if (Y->father->left_son == Y)
             {
                 Y->father->left_son = &sentinel_node;
@@ -589,47 +618,47 @@ void Tree::rebuilt_structure(Red_Black_Node *X)
         if (X == X->father->left_son)
         {
             node = X->father->right_son;
-            
-            //przypadek 1
+
+            // przypadek 1
             if (node->color == 'R')
-            { 
+            {
                 node->color = 'B';
                 X->father->color = 'R';
                 rotation_to_the_left(X->father);
                 node = X->father->right_son;
             }
-            
-            //przypadek 2
+
+            // przypadek 2
             if ((node->left_son->color == 'B') && (node->right_son->color == 'B'))
-            { 
+            {
                 node->color = 'R';
                 X = X->father;
                 continue;
             }
 
-            //przypadek 3
+            // przypadek 3
             if (node->right_son->color == 'B')
-            { 
+            {
                 node->left_son->color = 'B';
                 node->color = 'R';
                 rotation_to_the_right(node);
                 node = X->father->right_son;
             }
 
-            //przypadek 4
-            node->color = X->father->color; 
+            // przypadek 4
+            node->color = X->father->color;
             X->father->color = 'B';
             node->right_son->color = 'B';
             rotation_to_the_left(X->father);
-            //X = head; 
+            // X = head;
         }
         else
-        { 
+        {
             node = X->father->left_son;
-            
-            //przypadek 1
+
+            // przypadek 1
             if (node->color == 'R')
-            { 
+            {
                 node->color = 'B';
                 X->father->color = 'R';
                 rotation_to_the_right(X->father);
@@ -644,24 +673,24 @@ void Tree::rebuilt_structure(Red_Black_Node *X)
                 continue;
             }
 
-            //przypadek 3
+            // przypadek 3
             if (node->left_son->color == 'B')
-            { 
+            {
                 node->right_son->color = 'B';
                 node->color = 'R';
                 rotation_to_the_left(node);
                 node = X->father->left_son;
             }
 
-            //przypadek 4
-            node->color = X->father->color; 
+            // przypadek 4
+            node->color = X->father->color;
             X->father->color = 'B';
             node->left_son->color = 'B';
             rotation_to_the_right(X->father);
-            //X = head; 
+            // X = head;
         }
-        //warunek konczacy petle
-        X = head; 
+        // warunek konczacy petle
+        X = head;
     }
 }
 Red_Black_Node *Tree::minimum(Red_Black_Node *p)
@@ -674,20 +703,22 @@ Red_Black_Node *Tree::minimum(Red_Black_Node *p)
 
 Red_Black_Node *Tree::next_node(Red_Black_Node *p)
 {
-
+    //tworzymy pomocniczą zmienną
     Red_Black_Node *r;
 
+    //jezeli p nie jest straznikiem
     if (p != &sentinel_node)
     {
-        if (p->right_son != &sentinel_node)
+        //jezeli prawy syn p nie jest straznikiem
+        if (p->right_son == &sentinel_node)
         {
-            return minimum(p->right_son);
-        }
-
-        else
-        {
-            //???????????????
+            //r ustawiamy na ojca p
             r = p->father;
+            
+            //dopoki r jest rozne od straznika i p == prawemu synowi r
+            //przypisujemy r do p
+            //przypisujemy do r ojca r
+            //jezeli p jest lewym synem to konczymy
             while ((r != &sentinel_node) && (p == r->right_son))
             {
                 p = r;
@@ -695,14 +726,20 @@ Red_Black_Node *Tree::next_node(Red_Black_Node *p)
             }
             return r;
         }
+        //zwracamy minimum 
+        return minimum(p->right_son);
     }
+    //zwracamy puste
     return &sentinel_node;
 }
 void Tree::find_element(int number)
 {
+    //tworzymy pomocniczy element
     Red_Black_Node *p;
 
     p = head;
+    //iterujemy po kazdym elemencie
+    //szukajac poprawnej wartosci
     while ((p != &sentinel_node) && (p->number != number))
         if (number < p->number)
         {
