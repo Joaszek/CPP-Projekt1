@@ -1,5 +1,6 @@
-#include "List.h"
+// #include "List.h"
 #include "Tab.h"
+//#include "Tree.h"
 using namespace std;
 
 
@@ -20,9 +21,11 @@ int main(){
 //
 //        scanf("%i", &option);
 //    }
-    List list;
-    list.menu_list();
-    //Tab tab;
-    //tab.array_menu();
+    // Tree tree;
+    // tree.tree_menu();
+    Tab tab;
+    tab.array_menu();
+    // List list;
+    // list.menu_list();
     return 0;
 }

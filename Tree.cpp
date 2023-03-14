@@ -1,14 +1,4 @@
 #include "Tree.h"
-#include <stdio.h>
-#include <iostream>
-#include <stdlib.h>
-#include <conio.h>
-#include <fstream>
-#include <string>
-#include <cstdlib>
-#include <windows.h>
-#include <chrono>
-
 using namespace std;
 
 void Tree::tree_menu()
@@ -120,6 +110,7 @@ void Tree::tree_menu()
             Sleep(2000);
             break;
         }
+        print_tree("","",head);
     }
 }
 void Tree::print_tree(string sp, string sn, Red_Black_Node *p)
@@ -765,11 +756,16 @@ void Tree::find_element(int number)
 void Tree::measure_time()
 {
     const int NUMBER_OF_ITERATIONS = 20;
-    string file_name;
-    ofstream file;
+    string file_name="scores_tree.txt";
+
+    ofstream file(file_name, ios::out);
+    cout <<"1"<<endl;
 
     file.open(file_name);
     srand(time(NULL));
+
+    cout <<"2"<<endl;
+
 
     int tab_test[NUMBER_OF_ITERATIONS];
 
@@ -778,30 +774,54 @@ void Tree::measure_time()
         tab_test[NUMBER_OF_ITERATIONS] = rand() % 16;
     }
 
+    cout <<"3"<<endl;
+    if(file.is_open()){
+        cout << "open"<<endl;
+        file.write("test");
+    }
+
     head = NULL;
     size = 0;
-    for (int i = 0; i < 100; i++)
-    {
-        auto begin = chrono::steady_clock::now();
+    file << 0;
+    // for (int i = 0; i < 100; i++)
+    // {
 
-        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
-        {
-            add_element(number);
-        }
+    //     //dodawanie elementu
+    //     auto begin = chrono::steady_clock::now();
 
-        auto end = chrono::steady_clock::now();
+    //     for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+    //     {
+    //         add_element(number);
+    //     }
+    //         cout <<"4"<<endl;
 
-        file << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
+    //     auto end = chrono::steady_clock::now();
+    //         cout <<"5"<<endl;
+    //     auto duration = chrono::duration_cast<chrono::microseconds>(end - begin).count();
 
-        begin = chrono::steady_clock::now();
+    //     cout << duration << "koniec\n";
+    //     //dodanie wyniku do pliku scores_tree.txt
+    //     try{
+    //         file << "xd";
+    //     }
+    //     catch(exception e){
+    //         cout << e.what();
+    //     }
+    //     //usuwanie korzenia
+    //     begin = chrono::steady_clock::now();
+    // cout <<"7"<<endl;
 
-        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
-        {
-            delete_root();
-        }
+    //     for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+    //     {
+    //         delete_root();
+    //     }
+    // cout <<"8"<<endl;
 
-        end = chrono::steady_clock::now();
+    //     end = chrono::steady_clock::now();
+    // cout <<"9"<<endl;
 
-        file << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
-    }
+    //     //dodanie wyniku do pliku scores_tree.txt
+    //     file << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
+    //     cout <<"10"<<endl;
+    // }
 }

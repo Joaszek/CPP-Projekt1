@@ -24,7 +24,7 @@ public:
     void add_element_at_given_position(int number, int index);
 
     void delete_element(int index);
-
+    void create_array_from_file();
     void find_element(int number);
     void generate_array(int length);
     void print_array();
