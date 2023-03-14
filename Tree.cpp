@@ -753,7 +753,6 @@ void Tree::find_element(int number)
         cout << "Element znajduje sie w drzewie" << endl;
     }
 }
-
 void Tree::measure_time()
 {
     const int NUMBER_OF_ITERATIONS = 20;
@@ -771,6 +770,13 @@ void Tree::measure_time()
     for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
     {
         tab_test[i] = rand() % 16;
+    }
+
+    cout << "3" << endl;
+
+    if (file.is_open())
+    {
+        cout << "open" << endl;
     }
 
 
