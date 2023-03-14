@@ -777,7 +777,7 @@ void Tree::measure_time()
     cout <<"3"<<endl;
     if(file.is_open()){
         cout << "open"<<endl;
-        file.write("test");
+        file << "0";
     }
 
     head = NULL;
