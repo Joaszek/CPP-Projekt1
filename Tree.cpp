@@ -110,7 +110,7 @@ void Tree::tree_menu()
             Sleep(2000);
             break;
         }
-        print_tree("","",head);
+        print_tree("", "", head);
     }
 }
 void Tree::print_tree(string sp, string sn, Red_Black_Node *p)
@@ -472,7 +472,7 @@ void Tree::delete_element(int number)
 
             delete X;
         }
-        //X nie ma lewego syna
+        // X nie ma lewego syna
         else
         {
             // szukamy nastepnika
@@ -481,18 +481,18 @@ void Tree::delete_element(int number)
             // jezeli prawy syn nastepnika jest pusty
             if (Y->right_son == &sentinel_node)
             {
-                //jezeli Y jest lewym synem
+                // jezeli Y jest lewym synem
                 if (Y->father->left_son == Y)
                 {
                     Y->father->left_son = &sentinel_node;
                 }
 
-                else{
+                else
+                {
                     Y->father->right_son = &sentinel_node;
                 }
-                    
             }
-            //jezeli lewy syn nastepnika jest pusty
+            // jezeli lewy syn nastepnika jest pusty
             else
             {
                 Y->right_son->father = Y->father;
@@ -508,7 +508,8 @@ void Tree::delete_element(int number)
 
             X->number = Y->number;
 
-            if (X->color == 'B'){
+            if (X->color == 'B')
+            {
                 rebuilt_structure(X);
             }
             delete Y;
@@ -694,22 +695,22 @@ Red_Black_Node *Tree::minimum(Red_Black_Node *p)
 
 Red_Black_Node *Tree::next_node(Red_Black_Node *p)
 {
-    //tworzymy pomocniczą zmienną
+    // tworzymy pomocniczą zmienną
     Red_Black_Node *r;
 
-    //jezeli p nie jest straznikiem
+    // jezeli p nie jest straznikiem
     if (p != &sentinel_node)
     {
-        //jezeli prawy syn p nie jest straznikiem
+        // jezeli prawy syn p nie jest straznikiem
         if (p->right_son == &sentinel_node)
         {
-            //r ustawiamy na ojca p
+            // r ustawiamy na ojca p
             r = p->father;
-            
-            //dopoki r jest rozne od straznika i p == prawemu synowi r
-            //przypisujemy r do p
-            //przypisujemy do r ojca r
-            //jezeli p jest lewym synem to konczymy
+
+            // dopoki r jest rozne od straznika i p == prawemu synowi r
+            // przypisujemy r do p
+            // przypisujemy do r ojca r
+            // jezeli p jest lewym synem to konczymy
             while ((r != &sentinel_node) && (p == r->right_son))
             {
                 p = r;
@@ -717,20 +718,20 @@ Red_Black_Node *Tree::next_node(Red_Black_Node *p)
             }
             return r;
         }
-        //zwracamy minimum 
+        // zwracamy minimum
         return minimum(p->right_son);
     }
-    //zwracamy puste
+    // zwracamy puste
     return &sentinel_node;
 }
 void Tree::find_element(int number)
 {
-    //tworzymy pomocniczy element
+    // tworzymy pomocniczy element
     Red_Black_Node *p;
 
     p = head;
-    //iterujemy po kazdym elemencie
-    //szukajac poprawnej wartosci
+    // iterujemy po kazdym elemencie
+    // szukajac poprawnej wartosci
     while ((p != &sentinel_node) && (p->number != number))
         if (number < p->number)
         {
@@ -756,72 +757,68 @@ void Tree::find_element(int number)
 void Tree::measure_time()
 {
     const int NUMBER_OF_ITERATIONS = 20;
-    string file_name="scores_tree.txt";
+    string file_name = "scores_tree.txt";
 
     ofstream file(file_name, ios::out);
-    cout <<"1"<<endl;
+    cout << "1" << endl;
 
-    file.open(file_name);
     srand(time(NULL));
 
-    cout <<"2"<<endl;
-
+    cout << "2" << endl;
 
     int tab_test[NUMBER_OF_ITERATIONS];
 
     for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
     {
-        tab_test[NUMBER_OF_ITERATIONS] = rand() % 16;
+        tab_test[i] = rand() % 16;
     }
 
-    cout <<"3"<<endl;
-    if(file.is_open()){
-        cout << "open"<<endl;
-        file.write("test");
+    cout << "3" << endl;
+
+    if (file.is_open())
+    {
+        cout << "open" << endl;
     }
+
 
     head = NULL;
     size = 0;
-    file << 0;
-    // for (int i = 0; i < 100; i++)
-    // {
+    for (int i = 0; i < 100; i++)
+    {
 
-    //     //dodawanie elementu
-    //     auto begin = chrono::steady_clock::now();
+        // dodawanie elementu
+        auto begin = chrono::steady_clock::now();
 
-    //     for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
-    //     {
-    //         add_element(number);
-    //     }
-    //         cout <<"4"<<endl;
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            add_element(number);
+        }
+        cout << "4" << endl;
 
-    //     auto end = chrono::steady_clock::now();
-    //         cout <<"5"<<endl;
-    //     auto duration = chrono::duration_cast<chrono::microseconds>(end - begin).count();
+        auto end = chrono::steady_clock::now();
+        cout << "5" << endl;
+        auto duration = chrono::duration_cast<chrono::microseconds>(end - begin).count();
 
-    //     cout << duration << "koniec\n";
-    //     //dodanie wyniku do pliku scores_tree.txt
-    //     try{
-    //         file << "xd";
-    //     }
-    //     catch(exception e){
-    //         cout << e.what();
-    //     }
-    //     //usuwanie korzenia
-    //     begin = chrono::steady_clock::now();
-    // cout <<"7"<<endl;
+        cout << duration << "koniec\n";
+        // dodanie wyniku do pliku scores_tree.txt
+        file << duration << ";";
 
-    //     for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
-    //     {
-    //         delete_root();
-    //     }
-    // cout <<"8"<<endl;
+        // usuwanie korzenia
+        begin = chrono::steady_clock::now();
+        cout << "7" << endl;
 
-    //     end = chrono::steady_clock::now();
-    // cout <<"9"<<endl;
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++)
+        {
+            delete_root();
+        }
+        cout << "8" << endl;
 
-    //     //dodanie wyniku do pliku scores_tree.txt
-    //     file << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
-    //     cout <<"10"<<endl;
-    // }
+        end = chrono::steady_clock::now();
+        cout << "9" << endl;
+
+        // dodanie wyniku do pliku scores_tree.txt
+        file << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << ";";
+        cout << "10" << endl;
+    }
+    file.close();
 }
