@@ -773,13 +773,6 @@ void Tree::measure_time()
         tab_test[i] = rand() % 16;
     }
 
-    cout << "3" << endl;
-
-    if (file.is_open())
-    {
-        cout << "open" << endl;
-    }
-
 
     head = NULL;
     size = 0;
